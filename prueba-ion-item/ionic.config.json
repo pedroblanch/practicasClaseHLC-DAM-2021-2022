@@ -1,7 +1,0 @@
-{
-  "name": "prueba-ion-item",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
