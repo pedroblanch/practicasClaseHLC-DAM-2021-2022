@@ -824,8 +824,9 @@ empleados: Empleado[]=[
   public buscar(){
     this.empleadosSeleccionados=[];
     this.empleados.forEach(empleado=>{
-      if(!empleado.ciudad.match(this.ciudad)){
-        console.log(empleado);
+      if(empleado.ciudad.trim()===this.ciudad.trim()){
+        console.log(empleado.ciudad);
+        console.log(this.ciudad);
         this.empleadosSeleccionados.push(empleado);
       }
     })
