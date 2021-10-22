@@ -816,8 +816,8 @@ empleados: Empleado[]=[
   ciudad:string=null;
   mostrarEmpleados:boolean=false;
   empleadosSeleccionados:Empleado[];
-  sueldo:number;
-  practicas:boolean;
+  sueldo:number=null;
+  practicas:boolean=false;
   categoria:string;
   
 
@@ -826,20 +826,28 @@ empleados: Empleado[]=[
 
 
   public buscar(){
+    var cadenaBuscarCiudad:string;
+    var cadenaBuscarSueldo:string;
+
+    if(this.ciudad==null)
+      cadenaBuscarCiudad="true";
+    else
+      cadenaBuscarCiudad="empleado.ciudad.normalize().trim()===this.ciudad.normalize().trim()";
+
+    if(this.sueldo==null)
+      cadenaBuscarSueldo="true";
+    else
+      cadenaBuscarSueldo="empleado.sueldo>= this.sueldo";
+
+    console.log(cadenaBuscarSueldo + "" + cadenaBuscarCiudad + "");
+
     this.empleadosSeleccionados=[];
     this.empleados.forEach(empleado=>{
-      //console.log(this.ciudad);
-      if(!(this.ciudad==null)){   //se ha introducido la ciudad
-        if(empleado.ciudad.normalize().trim()===this.ciudad.normalize().trim()
-            && empleado.sueldo>=this.sueldo){
+        if(eval(cadenaBuscarCiudad) 
+                && eval(cadenaBuscarSueldo)
+                && this.practicas==empleado.practicas){
           this.empleadosSeleccionados.push(empleado);
         }
-      }
-      else{  //no se ha introducido la ciudad
-        if(empleado.sueldo>=this.sueldo){
-          this.empleadosSeleccionados.push(empleado);
-        }
-      }
     })
     this.mostrarEmpleados=true;
   }
@@ -847,7 +855,9 @@ empleados: Empleado[]=[
   public volver(){
     this.mostrarEmpleados=false;
     this.empleadosSeleccionados=[];
-    this.ciudad=null;
+    //this.ciudad=null;
+    //this.sueldo=null;
+    //this.practicas=null;
   }
 
 
