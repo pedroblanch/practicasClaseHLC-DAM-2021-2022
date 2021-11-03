@@ -6,22 +6,16 @@ import { Component } from '@angular/core';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+  ciclos: string[]=["DAM", "DAW", "ASIR"];
 
-  tipoEstudios:string=null;
-  cursoEso:string=null;
-  repiteEso:boolean=false;
-  ciclo:string=null;
-  listaCiclos:string[]=["DAM", "DAW", "ASIR"];
-  mensaje:string="";
+  curso:string="";
+  curso_eso:string="";
+  ciclo:string="";
 
   constructor() {}
 
-  clickBotonEso(){
-    console.log(this.tipoEstudios+" - "+this.cursoEso+" - "     + (this.repiteEso ? "repite" : "no repite"));
-  }
-
-  clickBotonCiclo(){
-    console.log(this.tipoEstudios+" - "+this.ciclo);
+  clickBoton1(){
+    console.log();
   }
 
 }

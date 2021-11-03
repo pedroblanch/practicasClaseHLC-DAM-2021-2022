@@ -11,10 +11,6 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
-  {
-    path: 'eso',
-    loadChildren: () => import('./eso/eso.module').then( m => m.EsoPageModule)
-  },
 ];
 
 @NgModule({

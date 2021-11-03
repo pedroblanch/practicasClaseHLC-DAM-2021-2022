@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavigationExtras } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { Gender } from '../modelo/Gender';
 
 @Component({
   selector: 'app-home',
@@ -14,14 +15,11 @@ export class HomePage {
     private navCtrl: NavController) { }
 
   validations_form: FormGroup;
-  genders: Array<string>;
+  genders: Gender[];
 
   ngOnInit() {
 
-    this.genders = [
-      "Male",
-      "Female"
-    ];
+    this.genders = Object.values(Gender);
 
     this.validations_form = this.formBuilder.group({
       username: new FormControl('', Validators.compose([
@@ -36,7 +34,7 @@ export class HomePage {
         Validators.required,
         Validators.pattern('^[a-zA-Z0-9_.+-]+[@]{1}[a-zA-Z0-9-]+[.]{1}[a-zA-Z]+$')
       ])),
-      gender: new FormControl(this.genders[0], Validators.required),
+      gender: new FormControl('', Validators.required),
       terms: new FormControl(false, Validators.pattern('true'))
     });
   }//end_ngOnInit

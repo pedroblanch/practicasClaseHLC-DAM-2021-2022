@@ -20,7 +20,7 @@ export class UserPage implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       this.user = JSON.parse(params["user"]);
       this.numero = params["numero"];
-      console.log(this.user.username);
+      console.log(this.user.gender);
     });
   }
 
