@@ -100,6 +100,7 @@ export class HomePage implements OnInit {
       valores.golesEquipoVisitante,
       valores.jugadoresEquipoLocal,
       valores.jugadoresEquipoVisitante);
+    console.log(partido);
     let navigationExtras: NavigationExtras = {
       queryParams: {
         partido: JSON.stringify(partido),
