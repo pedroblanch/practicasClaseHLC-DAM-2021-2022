@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { ApiServiceProvider } from 'src/providers/api-service/api-service';
 import { Alumno } from '../modelo/Alumno';
 
@@ -11,7 +12,8 @@ export class HomePage implements OnInit {
 
   private alumnos = new Array<Alumno>();
 
-  constructor(private apiService: ApiServiceProvider) {
+  constructor(private apiService: ApiServiceProvider,
+    public alertController: AlertController) {
   }
 
   /*
@@ -53,5 +55,93 @@ export class HomePage implements OnInit {
         console.log("Error al borrar: " + error);
       });
   }//end_eliminar_alumno
+
+  async modificarAlumno(indice: number) {
+    let alumno = this.alumnos[indice];
+    const alert = await this.alertController.create({
+      header: 'Modificar',
+      inputs: [
+        {
+          name: 'first_name',
+          type: 'text',
+          value: alumno.first_name,
+          placeholder: 'first_name'
+        },
+        {
+          name: 'last_name',
+          type: 'text',
+          id: 'last_name',
+          value: alumno.last_name,
+          placeholder: 'last_name'
+        },
+        {
+          name: 'email',
+          id: 'email',
+          type: 'text',
+          value: alumno.email,
+          placeholder: 'email'
+        },
+        {
+          name: 'gender',
+          id: 'gender',
+          type: 'text',
+          value: alumno.gender,
+          placeholder: 'gender'
+        },
+        {
+          name: 'avatar',
+          value: alumno.avatar,
+          type: 'url',
+          placeholder: 'avatar'
+        },
+        {
+          name: 'address',
+          value: alumno.address,
+          type: 'text',
+          placeholder: 'address'
+        },
+        {
+          name: 'city',
+          value: alumno.city,
+          type: 'text',
+          placeholder: 'city'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: (data) => {
+            console.log(data);
+            var alumnoModificado: Alumno = new Alumno();
+            alumnoModificado.id = alumno.id;
+            alumnoModificado.first_name = data['first_name'];
+            alumnoModificado.last_name = data['last_name'];
+            alumnoModificado.email = data['email'];
+            alumnoModificado.gender = data['gender'];
+            alumnoModificado.avatar = data['avatar'];
+            alumnoModificado.address = data['address'];
+            alumnoModificado.city = data['city'];
+            this.apiService.modificarAlumno(alumnoModificado)
+              .then((alumno: Alumno) => {
+                this.alumnos[indice] = alumno;
+              })
+              .catch((error: string) => {
+                console.log(error);
+              });
+            console.log('Confirm Ok');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }//end_modificarAlumno
 
 }//end_class

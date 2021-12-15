@@ -1,41 +1,31 @@
 export class Alumno {
 
-    constructor(public id: number,
-        public first_name: string,
-        public last_name: string,
-        public email: string,
-        public gender: string,
-        public avatar: string,
-        public address: string,
-        public city: string,
-        public postalCode: string
-    ) { }
+    id:number;
+    first_name:string;
+    last_name: string;
+    email:string;
+    gender: string;
+    avatar:string;
+    address:string;
+    city:string;
+    postalCode:string;
 
-    public static createFromJsonObject(jsonObject: any): Alumno {
-        let alumno: Alumno = new Alumno(jsonObject['id'],
-            jsonObject['first_name'],
-            jsonObject['last_name'],
-            jsonObject['email'],
-            jsonObject['gender'],
-            jsonObject['avatar'],
-            jsonObject['address'],
-            jsonObject['city'],
-            jsonObject['postalCode']);
-        return alumno;
+    constructor(){
+
     }
 
-    public getJsonObject(): any {
-        let jsonObject: any = {};
-        jsonObject['id'] = this.id;
-        jsonObject['first_name'] = this.first_name;
-        jsonObject['last_name'] = this.last_name;
-        jsonObject['email'] = this.email;
-        jsonObject['gender'] = this.gender;
-        jsonObject['avatar'] = this.avatar;
-        jsonObject['address'] = this.address;
-        jsonObject['city'] = this.city;
-        jsonObject['postalCode'] = this.postalCode;
-        return jsonObject;
+    public static createFromJsonObject(jsonObject: any): Alumno {
+        let alumno: Alumno = new Alumno();
+            alumno.id=jsonObject['id'],
+            alumno.first_name=jsonObject['first_name'],
+            alumno.last_name=jsonObject['last_name'],
+            alumno.email=jsonObject['email'],
+            alumno.gender=jsonObject['gender'],
+            alumno.avatar=jsonObject['avatar'],
+            alumno.address=jsonObject['address'],
+            alumno.city=jsonObject['city'],
+            alumno.postalCode=jsonObject['postalCode'];
+        return alumno;
     }
 
 }//end_class

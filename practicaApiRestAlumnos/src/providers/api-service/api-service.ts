@@ -68,4 +68,26 @@ export class ApiServiceProvider {
         return promise;
     }//end_eliminar_alumno
 
+    modificarAlumno(nuevosDatosAlumno: Alumno): Promise<Alumno> {
+        let promise = new Promise<Alumno>((resolve, reject) => {
+            var header = { "headers": { "Content-Type": "application/json" } };
+            let datos = JSON.stringify(nuevosDatosAlumno);
+            console.log(datos);
+            this.http.put(this.URL + "/alumnos/" + nuevosDatosAlumno.id,
+                datos,
+                header).toPromise().then(
+                    (data: any) => { // Success
+                        let alumno: Alumno;
+                        alumno = Alumno.createFromJsonObject(data);
+                        resolve(alumno);
+                    }
+                )
+                .catch((error: Error) => {
+                    reject(error.message);
+                });
+        });
+        return promise;
+
+    }//end_modificar_alumno
+
 }//end_class
