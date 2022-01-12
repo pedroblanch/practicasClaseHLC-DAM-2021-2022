@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { ApiServiceProvider } from 'src/providers/api-service/api-service';
+import { EditarAlumnoPage } from '../editar-alumno/editar-alumno.page';
 import { Alumno } from '../modelo/Alumno';
 
 @Component({
@@ -13,7 +14,8 @@ export class HomePage implements OnInit {
   private alumnos = new Array<Alumno>();
 
   constructor(private apiService: ApiServiceProvider,
-    public alertController: AlertController) {
+    public modalController: ModalController,
+    public toastController: ToastController) {
   }
 
   /*
@@ -56,6 +58,42 @@ export class HomePage implements OnInit {
       });
   }//end_eliminar_alumno
 
+  async modificarAlumno(indice: number) {
+    const modal = await this.modalController.create({
+      component: EditarAlumnoPage,
+      componentProps: {
+        'alumnoJson': JSON.stringify(this.alumnos[indice])
+      }
+    });
+
+
+    modal.onDidDismiss().then((data) => {
+      if (data['data'] != null) {
+        let alumnoJSON = JSON.parse(data['data']);
+        let alumnoModificado: Alumno = Alumno.createFromJsonObject(alumnoJSON);
+        this.apiService.modificarAlumno(alumnoModificado)  //se hace PUT a la API
+          .then((alumno: Alumno) => {
+            this.alumnos[indice] = alumno;  //si se ha modificado en la api se actualiza en la lista
+          })
+          .catch((error: string) => {
+            console.log(error);
+          });
+      }
+    });
+
+    return await modal.present();
+
+  }//end_modificarAlumno
+
+  ionViewDidEnter() {
+    console.log("ionViewDidEnter");
+  }
+
+  ionViewWillEnter() {
+    console.log("ionViewWillEnter");
+  }
+
+  /*
   async modificarAlumno(indice: number) {
     let alumno = this.alumnos[indice];
     const alert = await this.alertController.create({
@@ -143,5 +181,64 @@ export class HomePage implements OnInit {
 
     await alert.present();
   }//end_modificarAlumno
+  */
+
+  async nuevoAlumno() {
+
+    const modal = await this.modalController.create({
+
+      component: EditarAlumnoPage,
+
+      componentProps: {
+
+        'alumnoJson': JSON.stringify(new Alumno())
+
+      }
+
+    });
+
+    modal.onDidDismiss().then((data) => {
+
+      if (data['data'] != null) {
+
+        let alumnoJSON = JSON.parse(data['data']);
+
+        let alumnoNuevo: Alumno = Alumno.createFromJsonObject(alumnoJSON);
+
+        this.apiService.insertarAlumno(alumnoNuevo)  //se hace POST a la API
+
+          .then((alumno: Alumno) => {
+
+            this.alumnos.push(alumno);  //si se ha insertado en la api se añade en la lista
+
+          })
+
+          .catch((error: string) => {
+
+            this.presentToast("Error al insertar: " + error);
+
+          });
+
+      }
+
+    });
+
+    return await modal.present();
+
+  } //end_nuevoAlumno
+
+  async presentToast(message: string) {
+
+    const toast = await this.toastController.create({
+
+      message: message,
+
+      duration: 2000
+
+    });
+
+    toast.present();
+
+  }
 
 }//end_class
