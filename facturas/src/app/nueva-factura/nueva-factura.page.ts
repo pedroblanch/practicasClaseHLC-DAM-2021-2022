@@ -27,7 +27,6 @@ export class NuevaFacturaPage implements OnInit {
     this.apiService.getClientes()
       .then((clientes: Cliente[]) => {
         this.clientes = clientes;
-        console.log(this.clientes);
       })
       .catch((error: string) => {
         console.log(error);
@@ -38,6 +37,10 @@ export class NuevaFacturaPage implements OnInit {
     if (this.factura.cliente == null)
       return false;
     if (this.factura.productos.length == 0)
+      return false;
+    if (this.factura.porcentajeIva == null)
+      return false;
+    if (this.factura.porcentajeIva < 0)
       return false;
     return true;
   }
@@ -55,7 +58,8 @@ export class NuevaFacturaPage implements OnInit {
   }
 
   quitarUnidadProducto(indice: number) {
-    this.factura.productos[indice].unidades--;
+    if (this.factura.productos[indice].unidades > 1)
+      this.factura.productos[indice].unidades--;
   }
 
   async addProducto() {
