@@ -23,7 +23,7 @@ export class HomePage implements OnInit {
     public toastController: ToastController) {
        
     //el atributo dataProvider permite cambiar la gestión de los datos entre firebase y json-server
-    this.dataProvider=this.apiService;
+    this.dataProvider=this.firebaseService;
   }
 
   /*
