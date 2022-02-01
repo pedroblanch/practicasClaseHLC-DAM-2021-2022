@@ -23,7 +23,7 @@ export class HomePage implements OnInit {
     public toastController: ToastController) {
        
     //el atributo dataProvider permite cambiar la gestión de los datos entre firebase y json-server
-    this.dataProvider=this.apiService;
+    this.dataProvider=this.firebaseService;
   }
 
   /*
@@ -51,15 +51,34 @@ export class HomePage implements OnInit {
   Símplemente se elimina el alumno del array de alumnos de la clase, lo que hará que deje de verse en la vista.
   Si el borrado ha ido mal muestro por consola el error que ha ocurrido.
   */
-  eliminarAlumno(indice: number) {
+  eliminarAlumno(indice:number){
+
+    var urlAvatar=this.alumnos[indice].avatar;
+
     this.dataProvider.eliminarAlumno(this.alumnos[indice].id)
-      .then((correcto: boolean) => {
-        this.alumnos.splice(indice, 1);
-      })
-      .catch((error: string) => {
-        console.log("Error al borrar: " + error);
-      });
+
+    .then( () => {
+
+      //los datos del alumno se han eliminado correctamente de cloud firestore
+
+      //elimino la imagen de avatar del storage de firebase
+
+      this.dataProvider.removeImage(urlAvatar);
+
+      //this.alumnos.splice(indice,1);  No hace falta quitarlo del array. Se recarga todo el array de forma automática
+
+    })
+
+    .catch( (error:string) => {
+
+        this.presentToast("Error al borrar: "+error);
+
+    });
+
   }//end_eliminar_alumno
+
+
+
 
 
   /*

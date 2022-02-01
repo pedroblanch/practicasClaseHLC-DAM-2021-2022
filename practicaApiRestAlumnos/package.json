@@ -28,6 +28,7 @@
     "@ionic/angular": "^5.5.2",
     "firebase": "^9.6.3",
     "rxjs": "~6.6.0",
+    "storage": "^0.2.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
   },

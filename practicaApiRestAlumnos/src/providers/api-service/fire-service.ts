@@ -1,18 +1,69 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Alumno } from 'src/app/modelo/Alumno';
 import { InterfaceProvider } from './InterfaceProvider';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable()
 export class FireServiceProvider implements InterfaceProvider {
 
-    private URL = "http://localhost:3000";
-
-    constructor(public http: HttpClient,
-        private angularFirestore: AngularFirestore) {
+    constructor(private angularFirestore: AngularFirestore,
+        private afStorage: AngularFireStorage) {
     }
+
+    uploadImage(file: File, name: string): Promise<string> {
+        var promise: Promise<string> = new Promise<string>((resolve, reject) => {
+            //Se comprueba que el tipo del fichero pertenece a un tipo imagen
+            if (file.type.split('/')[0] !== 'image') {
+                console.log('File type is not supported!')
+                reject("El fichero no es de tipo imagen");
+            }
+            //se calcula el path dentro del storage de firebase
+            //se guarda dentro de una carpeta avatar
+            //el nombre del fichero es igual al id del alumno precedido de la hora dada por getTime 
+            const fileStoragePath = `avatar/${name}`;
+
+            // Image reference
+            const imageRef = this.afStorage.ref(fileStoragePath);
+
+            // File upload task
+            this.afStorage.upload(fileStoragePath, file)
+                .then((data) => {
+                    imageRef.getDownloadURL().subscribe(resp => {
+                        resolve(resp);
+                    });
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return (promise);
+    }//end_uploadImage
+
+
+    removeImage(imageUrl:string):Promise<string> {
+
+        var promise:Promise<string> = new Promise<string>( (resolve, reject)=>{
+      
+          var imageRef = this.afStorage.refFromURL(imageUrl);
+      
+          imageRef.delete().subscribe(resp=>{
+      
+            resolve;
+      
+          },
+      
+          error => {
+      
+            reject(error);
+      
+          });
+      
+        });
+      
+        return(promise);  
+      
+      }//end_uploadImage
 
     /*
     este método devuelve un objeto 'Promise'. Esto es un elemento asíncrono que puede finalizar de dos formas: correctamente, en cuyo caso sale con resolve, o bien de forma incorrecta, acabando en ese caso con reject.
@@ -28,8 +79,8 @@ export class FireServiceProvider implements InterfaceProvider {
             const snapshot = alumnosRef.get().toPromise()
                 .then((data: any) => {
                     let alumnos = new Array<Alumno>();
-                    data.forEach( element => { 
-                        let alumnoJson=element.data();
+                    data.forEach(element => {
+                        let alumnoJson = element.data();
                         let alumno = Alumno.createFromJsonObject(alumnoJson);
                         alumnos.push(alumno);
                     });
@@ -64,7 +115,7 @@ export class FireServiceProvider implements InterfaceProvider {
         return promise;
     }//end_eliminar_alumno
 
-    modificarAlumno(nuevosDatosAlumno: Alumno): Promise<Alumno> {   
+    modificarAlumno(nuevosDatosAlumno: Alumno): Promise<Alumno> {
         let promise = new Promise<Alumno>((resolve, reject) => {
             console.log(nuevosDatosAlumno.id);
             this.angularFirestore.collection("alumnos").doc(nuevosDatosAlumno.id).update(JSON.parse(JSON.stringify(nuevosDatosAlumno)))
@@ -72,7 +123,7 @@ export class FireServiceProvider implements InterfaceProvider {
                     resolve(nuevosDatosAlumno);
                 })
                 .catch((error: Error) => {
-                    console.log("ERROR: "+error.message);
+                    console.log("ERROR: " + error.message);
                     reject(error.message);
                 });
         });

@@ -10,4 +10,6 @@ export interface InterfaceProvider {
 
     insertarAlumno(datosNuevoAlumno: Alumno): Promise<Alumno>;
 
+    removeImage(urlImage:string): Promise<string>
+
 }

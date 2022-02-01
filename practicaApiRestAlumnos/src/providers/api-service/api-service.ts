@@ -10,6 +10,10 @@ export class ApiServiceProvider  implements InterfaceProvider {
 
     constructor(public http: HttpClient) {
     }
+    
+    removeImage(urlImage: string): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
 
     /*
     este método devuelve un objeto 'Promise'. Esto es un elemento asíncrono que puede finalizar de dos formas: correctamente, en cuyo caso sale con resolve, o bien de forma incorrecta, acabando en ese caso con reject.
