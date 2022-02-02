@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
+import { ApiServiceProvider } from 'src/providers/api-service/api-service';
 import { FireServiceProvider } from 'src/providers/api-service/fire-service';
+import { InterfaceProvider } from 'src/providers/api-service/InterfaceProvider';
 import { Alumno } from '../modelo/Alumno';
 
 @Component({
@@ -14,15 +16,26 @@ export class EditarAlumnoPage implements OnInit {
   @Input() alumnoJson;
   alumno: Alumno;
   validations_form: FormGroup;
+  private dataProvider: InterfaceProvider;
+  private imageFile: File = null;
+  private imageFileName: string = null;
+  private lastImageUrl: string = null;
 
   constructor(public formBuilder: FormBuilder,
     public modalCtrl: ModalController,
-    public apiService: FireServiceProvider) { }
+    private apiService: ApiServiceProvider,
+    public firebaseService: FireServiceProvider) {
+    //el atributo dataProvider permite cambiar la gestión de los datos entre firebase y json-server
+    this.dataProvider = this.firebaseService;
+  }
 
   ngOnInit() {
     //los datos del alumno llegan como un objeto JSON pasado como cadena
     //hay que parsearlo y transformarlo en un objeto Alumno
+    //si el id es null significa que se va a insertar los datos de un nuevo alumno
+    //si el id no es null significa que se van a modificar los datos
     this.alumno = Alumno.createFromJsonObject(JSON.parse(this.alumnoJson));
+    this.lastImageUrl = this.alumno.avatar;
     this.validations_form = this.formBuilder.group({
       first_name: new FormControl(this.alumno.first_name, Validators.compose([
         Validators.maxLength(50),
@@ -67,7 +80,32 @@ export class EditarAlumnoPage implements OnInit {
     this.alumno.city = values['city'];
     this.alumno.avatar = values['avatar'];
     this.alumno.gender = values['gender'];
-    this.modalCtrl.dismiss(this.alumno);  
+    if (this.alumno.id != null) { //estoy modificando datos
+      this.dataProvider.modificarAlumno(this.alumno)
+        .then((alumno: Alumno) => {
+          //compruebo si la imagen se ha modificado
+          if (this.imageFile != null) {
+            //se ha modificado la imagen
+            //borro la antigua
+            this.dataProvider.removeImage(this.lastImageUrl);
+          }
+          this.modalCtrl.dismiss(alumno);
+        })
+        .catch((error: string) => {
+          console.log(error);
+          this.modalCtrl.dismiss();
+        });
+    }
+    else {  //si el id es null estoy insertando un nuevo alumno
+      this.dataProvider.insertarAlumno(this.alumno)
+        .then((alumno: Alumno) => {
+          this.modalCtrl.dismiss(alumno);
+        })
+        .catch((error: string) => {
+          console.log(error);
+          this.modalCtrl.dismiss();
+        });
+    }
     //los valores son correctos. 
     //Se devuekve un objeto Alumno con los datos del formulario.
     //el id del objeto no se cambia. Si estoy añadiendo nuevos datos es null.
@@ -75,23 +113,30 @@ export class EditarAlumnoPage implements OnInit {
   }
 
   public closeModal() {
+    //si se cancela la ediciónen este caso y estaba insertando un nuevo alumno
+    //debo comprobar si se ha añadido imagen
+    if (this.alumno.id == null && this.imageFile != null) {
+      this.dataProvider.eliminarAlumno(this.alumno.avatar);
+    }
     this.modalCtrl.dismiss();  //se cancela la edición. No se devuelven datos.
   }
 
-  uploadImage(event: FileList){
-    var file:File=event.item(0);
-    var extension = file.name.substr(file.name.lastIndexOf('.') + 1);
+
+  imageOnChange(event: FileList) {
+    this.imageFile = event.item(0);
+    var extension = this.imageFile.name.substr(this.imageFile.name.lastIndexOf('.') + 1);
     //doy al nombre del fichero un número aleatorio 
     //le pongo al nombre también la extensión del fichero
-    var fileName= `${new Date().getTime()}.${extension}`;
+    this.imageFileName = `${new Date().getTime()}.${extension}`;
     this.validations_form.controls.avatar.setValue("");
-    this.apiService.uploadImage(file,fileName)
-    .then( (downloadUrl)=>{
-      this.alumno.avatar=downloadUrl;
-      this.validations_form.controls.avatar.setValue(downloadUrl);
-    })
-    .catch((error)=>{
-      console.log(error);
-    });
+    this.dataProvider.uploadImage(this.imageFile, this.imageFileName)
+      .then((downloadUrl) => {
+        this.alumno.avatar = downloadUrl;
+        this.validations_form.controls.avatar.setValue(downloadUrl);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
-}
+
+}//end_class

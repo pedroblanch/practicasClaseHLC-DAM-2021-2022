@@ -10,6 +10,9 @@ export class ApiServiceProvider  implements InterfaceProvider {
 
     constructor(public http: HttpClient) {
     }
+    uploadImage(file: File, name: string): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
     
     removeImage(urlImage: string): Promise<string> {
         throw new Error('Method not implemented.');

@@ -12,4 +12,6 @@ export interface InterfaceProvider {
 
     removeImage(urlImage:string): Promise<string>
 
+    uploadImage(file: File, name: string): Promise<string> 
+
 }

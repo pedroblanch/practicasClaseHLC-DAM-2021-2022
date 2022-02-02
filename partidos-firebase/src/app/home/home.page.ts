@@ -20,7 +20,8 @@ export class HomePage implements OnInit {
   constructor(private apiService: ApiServiceProvider,
     public firebaseService: FireServiceProvider,
     public modalController: ModalController,
-    public toastController: ToastController) {
+    public toastController: ToastController,
+    public alertCtrl: AlertController) {
 
     //el atributo dataProvider permite cambiar la gestión de los datos entre firebase y json-server
     this.dataProvider = this.firebaseService;
@@ -79,10 +80,10 @@ export class HomePage implements OnInit {
   iniciarPartido(indice: number) {
     this.partidos[indice].horaInicioPartido = new Date().getTime();
     this.firebaseService.modificarPartido(this.partidos[indice])
-      .then((partido:Partido)=>{
-          //inserción correcta
+      .then((partido: Partido) => {
+        //inserción correcta
       })
-      .catch((error:Error)=>{
+      .catch((error: Error) => {
         console.log(error.message);
       });
   }
@@ -90,10 +91,10 @@ export class HomePage implements OnInit {
   finalizarPrimerTiempo(indice: number) {
     this.partidos[indice].horaFinPrimeraParte = new Date().getTime();
     this.firebaseService.modificarPartido(this.partidos[indice])
-      .then((partido:Partido)=>{
-          //inserción correcta
+      .then((partido: Partido) => {
+        //inserción correcta
       })
-      .catch((error:Error)=>{
+      .catch((error: Error) => {
         console.log(error.message);
       });
   }
@@ -101,10 +102,10 @@ export class HomePage implements OnInit {
   iniciarSegundoTiempo(indice: number) {
     this.partidos[indice].horaInicioSegundaParte = new Date().getTime();
     this.firebaseService.modificarPartido(this.partidos[indice])
-      .then((partido:Partido)=>{
-          //inserción correcta
+      .then((partido: Partido) => {
+        //inserción correcta
       })
-      .catch((error:Error)=>{
+      .catch((error: Error) => {
         console.log(error.message);
       });
   }
@@ -112,10 +113,10 @@ export class HomePage implements OnInit {
   finalizarPartido(indice: number) {
     this.partidos[indice].horaFinPartido = new Date().getTime();
     this.firebaseService.modificarPartido(this.partidos[indice])
-      .then((partido:Partido)=>{
-          //inserción correcta
+      .then((partido: Partido) => {
+        //inserción correcta
       })
-      .catch((error:Error)=>{
+      .catch((error: Error) => {
         console.log(error.message);
       });
   }
@@ -127,5 +128,40 @@ export class HomePage implements OnInit {
     });
     toast.present();
   }
+
+  confirmar(mensaje: string, indice: number, accion: string) {
+    this.alertCtrl.create({
+      message: mensaje,
+      buttons: [
+        {
+          text: 'Confirmar',
+          handler: () => {
+            switch (accion) {
+              case 'INICIAR_PARTIDO':
+                this.iniciarPartido(indice);
+                break;
+              case 'FINALIZAR_PRIMER_TIEMPO':
+                this.finalizarPrimerTiempo(indice);
+                break;
+              case 'INICIAR_SEGUNDO_TIEMPO':
+                this.iniciarSegundoTiempo(indice);
+                break;
+              case 'FINALIZAR_PARTIDO':
+                this.finalizarPartido(indice);
+                break;
+            }
+          }
+        },
+        {
+          text: 'Cancelar',
+          handler: () => {
+            console.log('Cancelar');
+          }
+        }
+      ]
+    }).then(res => {
+      res.present();
+    });
+  }//end_confirmar
 
 }//end_class

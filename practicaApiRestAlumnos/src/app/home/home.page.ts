@@ -21,9 +21,9 @@ export class HomePage implements OnInit {
     public firebaseService: FireServiceProvider,
     public modalController: ModalController,
     public toastController: ToastController) {
-       
+
     //el atributo dataProvider permite cambiar la gestión de los datos entre firebase y json-server
-    this.dataProvider=this.firebaseService;
+    this.dataProvider = this.firebaseService;
   }
 
   /*
@@ -51,34 +51,20 @@ export class HomePage implements OnInit {
   Símplemente se elimina el alumno del array de alumnos de la clase, lo que hará que deje de verse en la vista.
   Si el borrado ha ido mal muestro por consola el error que ha ocurrido.
   */
-  eliminarAlumno(indice:number){
-
-    var urlAvatar=this.alumnos[indice].avatar;
-
+  eliminarAlumno(indice: number) {
+    var urlAvatar = this.alumnos[indice].avatar;
     this.dataProvider.eliminarAlumno(this.alumnos[indice].id)
-
-    .then( () => {
-
-      //los datos del alumno se han eliminado correctamente de cloud firestore
-
-      //elimino la imagen de avatar del storage de firebase
-
-      this.dataProvider.removeImage(urlAvatar);
-
-      //this.alumnos.splice(indice,1);  No hace falta quitarlo del array. Se recarga todo el array de forma automática
-
-    })
-
-    .catch( (error:string) => {
-
-        this.presentToast("Error al borrar: "+error);
-
-    });
+      .then(() => {
+        //los datos del alumno se han eliminado correctamente de cloud firestore
+        //elimino la imagen de avatar del storage de firebase
+        this.dataProvider.removeImage(urlAvatar);
+        this.alumnos.splice(indice, 1);
+      })
+      .catch((error: string) => {
+        this.presentToast("Error al borrar: " + error);
+      });
 
   }//end_eliminar_alumno
-
-
-
 
 
   /*
@@ -97,15 +83,13 @@ export class HomePage implements OnInit {
     });
 
     modal.onDidDismiss().then((dataAlumnoModificado) => {
-      let alumnoModificado:Alumno=dataAlumnoModificado['data'];
+      let alumnoModificado: Alumno = dataAlumnoModificado['data'];
       if (alumnoModificado != null) {
-        this.dataProvider.modificarAlumno(alumnoModificado) 
-          .then((alumno: Alumno) => {
-            this.alumnos[indice] = alumno;  //si se ha modificado en la api se actualiza en la lista
-          })
-          .catch((error: string) => {
-            console.log(error);
-          });
+        this.alumnos[indice] = alumnoModificado;  //si se ha modificado en la api se actualiza en la lista
+      }
+      else {
+        //ha habido un error o se ha pulsado cancelar
+        //no se hace nada
       }
     });
 
@@ -131,16 +115,13 @@ export class HomePage implements OnInit {
     });
 
     modal.onDidDismiss().then((dataNuevoAlumno) => {
-      let nuevoAlumno:Alumno=dataNuevoAlumno['data'];
+      let nuevoAlumno: Alumno = dataNuevoAlumno['data'];
       if (nuevoAlumno != null) {
-        this.dataProvider.insertarAlumno(nuevoAlumno)
-          .then((alumno: Alumno) => {
-            this.alumnos.push(alumno);  //si se ha insertado en la api se añade en la lista
-          })
-          .catch((error: string) => {
-            console.log(error);
-            this.presentToast("Error al insertar: " + error);
-          });
+        this.alumnos.push(nuevoAlumno);  //si se ha insertado en la api se añade en la lista
+      }
+      else {
+        //ha habido un error al insertar o se ha pulsado cancelar
+        //no se hace nada
       }
     });
     return await modal.present();
