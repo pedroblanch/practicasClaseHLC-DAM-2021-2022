@@ -113,10 +113,10 @@ export class EditarAlumnoPage implements OnInit {
   }
 
   public closeModal() {
-    //si se cancela la ediciónen este caso y estaba insertando un nuevo alumno
+    //si se cancela la edición y estaba insertando un nuevo alumno
     //debo comprobar si se ha añadido imagen
     if (this.alumno.id == null && this.imageFile != null) {
-      this.dataProvider.eliminarAlumno(this.alumno.avatar);
+      this.dataProvider.removeImage(this.alumno.avatar);
     }
     this.modalCtrl.dismiss();  //se cancela la edición. No se devuelven datos.
   }
