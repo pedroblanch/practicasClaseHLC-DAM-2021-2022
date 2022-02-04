@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { FireServiceProvider } from 'src/providers/api-service/fire-service';
+import { InterfaceProvider } from 'src/providers/api-service/InterfaceProvider';
 import { Alumno } from '../modelo/Alumno';
-import { Expediente } from '../modelo/Expediente';
 import { NuevoEspedientePage } from '../nuevo-espediente/nuevo-espediente.page';
 
 @Component({
@@ -16,9 +17,13 @@ export class VerExpedientePage implements OnInit {
   @Input() alumnoJson;
   alumno: Alumno;
   modificadoExpediente: boolean = false;
+  private dataProvider: InterfaceProvider;
 
-  constructor(public modalCtrl: ModalController
-  ) { }
+  constructor(public modalCtrl: ModalController,
+    public firebaseService: FireServiceProvider
+  ) {
+    this.dataProvider = this.firebaseService;
+  }
 
   ngOnInit() {
     this.alumno = Alumno.createFromJsonObject(JSON.parse(this.alumnoJson));
@@ -52,7 +57,7 @@ export class VerExpedientePage implements OnInit {
       //el alumno se ha modificado. Devuelvo el objeto alumno modificado
       this.modalCtrl.dismiss(this.alumno);
     }
-    else{
+    else {
       //el alumno no se ha modificado. No devuelvo datos
       this.modalCtrl.dismiss();
     }
@@ -61,6 +66,27 @@ export class VerExpedientePage implements OnInit {
   verDocumento(indice: number) {
     console.log(this.alumno.expedientes[indice]);
   }
+
+  eliminarDocumento(indice: number) {
+    this.dataProvider.removeFile(this.alumno.expedientes[indice].urlFile)
+      .then( (data) => {
+        //se ha borrado el archivo de forma correcta
+        //quito el documento del expediente del alumno 
+        this.alumno.expedientes.splice(indice, 1);
+        //modifico los datos del alumno en firebase
+        this.dataProvider.modificarAlumno(this.alumno)
+          .then(data => {
+            //los datos del alumno se han modificado de forma correcta
+            this.modificadoExpediente = true;
+          })
+          .catch(error => {
+            console.log(error);
+          })
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }//end_eliminarDocumento
 
 
 }//end_class

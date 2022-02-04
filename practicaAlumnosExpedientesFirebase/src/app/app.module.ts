@@ -13,9 +13,10 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FireServiceProvider } from 'src/providers/api-service/fire-service';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { PdfViewerComponent } from 'ng2-pdf-viewer'; 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,PdfViewerComponent],
   entryComponents: [],
   imports: [HttpClientModule,BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),

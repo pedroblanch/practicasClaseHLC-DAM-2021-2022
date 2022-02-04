@@ -78,7 +78,7 @@ export class FireServiceProvider implements InterfaceProvider {
       
           imageRef.delete().subscribe(resp=>{
       
-            resolve;
+            resolve(resp);
       
           },
       
