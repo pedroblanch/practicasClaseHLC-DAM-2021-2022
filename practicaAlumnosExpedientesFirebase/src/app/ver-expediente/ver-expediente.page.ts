@@ -4,6 +4,7 @@ import { FireServiceProvider } from 'src/providers/api-service/fire-service';
 import { InterfaceProvider } from 'src/providers/api-service/InterfaceProvider';
 import { Alumno } from '../modelo/Alumno';
 import { NuevoEspedientePage } from '../nuevo-espediente/nuevo-espediente.page';
+import { VerDocumentoPage } from '../ver-documento/ver-documento.page';
 
 @Component({
   selector: 'app-ver-expediente',
@@ -63,9 +64,15 @@ export class VerExpedientePage implements OnInit {
     }
   }
 
-  verDocumento(indice: number) {
-    console.log(this.alumno.expedientes[indice]);
-  }
+  async verDocumento(indice: number) {
+    const modal = await this.modalCtrl.create({
+      component: VerDocumentoPage,
+      componentProps: {
+        'expedienteJson': JSON.stringify(this.alumno.expedientes[indice])
+      }
+    });
+    return await modal.present();  
+  }//end_verDocumento
 
   eliminarDocumento(indice: number) {
     this.dataProvider.removeFile(this.alumno.expedientes[indice].urlFile)

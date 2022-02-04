@@ -16,6 +16,7 @@ export class HomePage implements OnInit {
 
   private alumnos = new Array<Alumno>();
   private dataProvider: InterfaceProvider;
+  pdfSrc = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
 
   //se inyectan los dos providers para poder cambiar entre firebase y json-server
   constructor(private apiService: ApiServiceProvider,

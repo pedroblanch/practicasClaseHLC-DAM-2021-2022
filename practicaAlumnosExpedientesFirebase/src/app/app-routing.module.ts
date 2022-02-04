@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'nuevo-espediente',
     loadChildren: () => import('./nuevo-espediente/nuevo-espediente.module').then( m => m.NuevoEspedientePageModule)
   },
+  {
+    path: 'ver-documento',
+    loadChildren: () => import('./ver-documento/ver-documento.module').then( m => m.VerDocumentoPageModule)
+  },
 ];
 
 @NgModule({

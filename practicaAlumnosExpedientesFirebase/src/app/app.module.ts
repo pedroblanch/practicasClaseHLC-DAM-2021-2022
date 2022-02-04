@@ -13,15 +13,14 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FireServiceProvider } from 'src/providers/api-service/fire-service';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
-import { PdfViewerComponent } from 'ng2-pdf-viewer'; 
 
 @NgModule({
-  declarations: [AppComponent,PdfViewerComponent],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [HttpClientModule,BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,AngularFireStorageModule],
-  providers: [    ApiServiceProvider, FireServiceProvider,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [ApiServiceProvider, FireServiceProvider,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
