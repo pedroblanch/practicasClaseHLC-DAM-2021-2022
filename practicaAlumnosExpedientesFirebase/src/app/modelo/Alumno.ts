@@ -7,7 +7,7 @@ export class Alumno {
     last_name: string = "";
     email: string = "";
     gender: string = 'Male';
-    avatar: string = "";
+    avatar: string = null;
     address: string = "";
     city: string = "";
     expedientes:Expediente[]=new Array();

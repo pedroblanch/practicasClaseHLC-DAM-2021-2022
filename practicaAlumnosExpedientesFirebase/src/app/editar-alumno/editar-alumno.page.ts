@@ -122,8 +122,8 @@ export class EditarAlumnoPage implements OnInit {
   }
 
 
-  imageOnChange(event: FileList) {
-    this.imageFile = event.item(0);
+  imageOnChange(event: any) {
+    this.imageFile = event.target.files.item(0);
     var extension = this.imageFile.name.substr(this.imageFile.name.lastIndexOf('.') + 1);
     //doy al nombre del fichero un número aleatorio 
     //le pongo al nombre también la extensión del fichero
@@ -138,5 +138,6 @@ export class EditarAlumnoPage implements OnInit {
         console.log(error);
       });
   }
+
 
 }//end_class
