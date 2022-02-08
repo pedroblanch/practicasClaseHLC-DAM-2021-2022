@@ -31,4 +31,4 @@ export class VerDocumentoPage implements OnInit {
     this.modalCtrl.dismiss();
   }
 
-}//end_class
+}
