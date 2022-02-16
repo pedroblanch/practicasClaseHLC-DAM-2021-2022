@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { FireServiceProvider } from 'src/providers/api-service/fire-service';
-import { BuscarFacturaPage } from '../buscar-factura/buscar-factura.page';
 import { Factura } from '../modelo/Factura';
 
 @Component({
@@ -17,77 +16,71 @@ export class HomePage implements OnInit {
   //se inyectan los dos providers para poder cambiar entre firebase y json-server
   constructor(public firebaseService: FireServiceProvider,
     public modalController: ModalController,
-    public toastController: ToastController) {
+    public toastController: ToastController,
+    public alertController: AlertController) {
   }
 
 
   ngOnInit(): void {
-    this.leerFacturas('inicio');
-  }
-
-  async buscar() {
-    const modal = await this.modalController.create({
-      component: BuscarFacturaPage,
-      componentProps: {
-      }
-    });
-
-    modal.onDidDismiss().then((dataFacturas) => {
-      let facturas: Factura[] = dataFacturas['data'];
-      if (facturas != null) {
-        if (facturas.length == 0) {
-          //no se ha encontrado ninguna factura que cumpla los criterios de búsqueda
-          this.presentToast("No existen facturas con ese criterio de búsqueda");
-          //vuelvo a leer todas las facturas
-          this.leerFacturas('inicio');
-        }
-        else {
-          //se han encontrado facturas que cumplen los criterios de búsqueda
-          this.facturas = facturas;
-        }
-      }
-      else {
-        //se ha cancelado la búsqueda
-        //vuelvo a leer todas las facturas
-        this.leerFacturas('inicio');
-      }
-    });
-    return await modal.present();
-  }//end_modificarAlumno
-
-  async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 2000
-    });
-    toast.present();
+    this.leerFacturas(FireServiceProvider.INICIO);
   }
 
   siguiente() {
-    this.leerFacturas('siguiente');
+    this.leerFacturas(FireServiceProvider.SIGUIENTE);
   }
 
   anterior() {
-    this.leerFacturas('anterior');
+    this.leerFacturas(FireServiceProvider.ANTERIOR);
   }
 
   inicio() {
-    this.leerFacturas('inicio');
+    this.leerFacturas(FireServiceProvider.INICIO);
   }
 
-  ultimo(){
-    this.leerFacturas('ultimo');
+  ultimo() {
+    this.leerFacturas(FireServiceProvider.ULTIMO);
   }
 
-  leerFacturas(accion:string){
+  leerFacturas(accion: number) {
     this.firebaseService.getFacturas(this.numeroElementosPorPagina, accion)
-    .then((facturas: Factura[]) => {
-      this.facturas = facturas;
-    })
-    .catch((error: string) => {
-      console.log(error);
-    });
+      .then((facturas: Factura[]) => {
+        this.facturas = facturas;
+      })
+      .catch((error: string) => {
+        console.log(error);
+      });
   }
+
+  async settings() {
+    const alert = await this.alertController.create({
+      header: 'settings',
+      inputs: [
+        {
+          name: 'numeroElementosPorPagina',
+          value: this.numeroElementosPorPagina,
+          type: 'number',
+          min: 1,
+          max: 20,
+          placeholder: 'elementos por página'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: (data:any) => {
+            this.numeroElementosPorPagina=data['numeroElementosPorPagina'];
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }//end_settings
 
 
 }//end_class

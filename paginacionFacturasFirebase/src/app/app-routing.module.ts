@@ -11,10 +11,6 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
-  {
-    path: 'buscar-factura',
-    loadChildren: () => import('./buscar-factura/buscar-factura.module').then( m => m.BuscarFacturaPageModule)
-  },
 ];
 
 @NgModule({
